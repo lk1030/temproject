@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+<script type="text/javascript">
+
+$(function(){
+
+var dataPoints1 = [];
+var dataPoints2 = [];
+var dataPoints3 = [];
+var dataPoints4 = [];
+
+var chart = new CanvasJS.Chart("chartContainer", {
+	zoomEnabled: true,
+	title: {
+		text: "코인차트"
+	},
+	axisX: {
+		title: "1초마다 변경"
+	},
+	axisY:{
+		prefix: "$",
+		includeZero: false
+	}, 
+	toolTip: {
+		shared: true
+	},
+	legend: {
+		cursor:"pointer",
+		verticalAlign: "top",
+		fontSize: 22,
+		fontColor: "dimGrey",
+		itemclick : toggleDataSeries
+	},
+	data: [{ 
+		type: "line",
+		xValueType: "dateTime",
+		yValueFormatString: "$####.00",
+		xValueFormatString: "hh:mm:ss",
+		showInLegend: true,
+		name: "A코인",
+		dataPoints: dataPoints1
+		},
+		{				
+			type: "line",
+			xValueType: "dateTime",
+			yValueFormatString: "$####.00",
+			showInLegend: true,
+			name: "B코인" ,
+			dataPoints: dataPoints2
+	},
+		{ 
+			type: "line",
+			xValueType: "dateTime",
+			yValueFormatString: "$####.00",
+			showInLegend: true,
+			name: "C코인",
+			dataPoints: dataPoints3
+			},
+			{ 
+				type: "line",
+				xValueType: "dateTime",
+				yValueFormatString: "$####.00",
+				showInLegend: true,
+				name: "D코인",
+				dataPoints: dataPoints4
+				}
+		]
+});
+
+function toggleDataSeries(e) {
+	if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+		e.dataSeries.visible = false;
+	}
+	else {
+		e.dataSeries.visible = true;
+	}
+	chart.render();
+}
+var updateInterval;
+
+$("select").on("change",function()
+		{
+	//console.log($(this),this);
+	console.log($(this).val(), this);
+	console.log($(":selected").text());
+	console.log($(":selected").val());
+	$("span").text($(":selected").text());
+	updateInterval = $(":selected").text();
+	console.log(updateInterval);
+		});
+console.log(updateInterval);
+
+
+// initial value
+var yValue1 = 600; 
+var yValue2 = 605;
+var yValue3 = 610;
+var yValue4 = 615;
+
+var time = new Date;
+// starting at 9.30 am
+time.setHours(time.getHours());
+time.setMinutes(time.getMinutes());
+time.setSeconds(time.getSeconds());
+
+function updateChart(count) {
+	count = count || 1;
+	var deltaY1, deltaY2, deltaY3, deltaY4;
+	for (var i = 0; i < count; i++) {
+		time.setTime(time.getTime()+ updateInterval);
+		deltaY1 = 50 + Math.random() *(-50-50);
+		deltaY2 = 50 + Math.random() *(-50-50);
+		deltaY3 = 50 + Math.random() *(-50-50);
+		deltaY4 = 50 + Math.random() *(-50-50);
+
+	// adding random value and rounding it to two digits. 
+	yValue1 = Math.round((yValue1 + deltaY1)*100)/100;
+	yValue2 = Math.round((yValue2 + deltaY2)*100)/100;
+	yValue3 = Math.round((yValue3 + deltaY3)*100)/100;
+	yValue4 = Math.round((yValue4 + deltaY4)*100)/100;
+
+	// pushing the new values
+	dataPoints1.push({
+		x: time.getTime(),
+		y: yValue1
+	});
+	dataPoints2.push({
+		x: time.getTime(),
+		y: yValue2
+	});
+	dataPoints3.push({
+		x: time.getTime(),
+		y: yValue3
+	});
+	dataPoints4.push({
+		x: time.getTime(),
+		y: yValue4
+	});
+	}
+
+	// updating legend text with  updated with y Value 
+	chart.options.data[0].legendText = " A코인  $" + yValue1;
+	chart.options.data[1].legendText = " B코인  $" + yValue2;
+	chart.options.data[2].legendText = " C코인  $" + yValue3;
+	chart.options.data[3].legendText = " D코인  $" + yValue4;
+	chart.render();
+}
+// generates first set of dataPoints 
+updateChart(1);
+
+
+setInterval(function(){updateChart()}, updateInterval);
+
+});
+</script>
+</head>
+<body>
+<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<select>
+<option value="one">1000</option>
+<option value="five">5000</option>
+<option value="ten">10000</option>
+</select>
+선택값<span></span>
+</body>
+</html>
